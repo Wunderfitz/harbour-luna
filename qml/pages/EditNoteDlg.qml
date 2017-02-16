@@ -136,7 +136,7 @@ Dialog {
 			_noteInfo.note = note.text;
         }
         if (update) {
-			console.log(_noteInfo.dbid, _noteInfo.girlId);
+			console.log(_noteInfo.dbid, _noteInfo.lunaId);
 			if (_noteInfo.dbid > 0) {
 				noteInfo['idx'] = idx;
 				Persistence.updateNote(_noteInfo);
@@ -149,4 +149,3 @@ Dialog {
         }
     }
 }
-

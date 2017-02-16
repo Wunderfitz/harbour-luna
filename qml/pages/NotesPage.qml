@@ -37,7 +37,7 @@ import "Persistence.js" as Persistence
 Page {
 	id: page
 
-	property var girlInfo
+	property var lunaInfo
 
 	property bool _search: false
 	property string _searchString: ''
@@ -57,7 +57,7 @@ Page {
 			function updateNote(noteInfo, idx) {
 				notesModel.set(idx, {
 					"dbid": noteInfo.dbid,
-					"girlId": girlInfo.dbid,
+					"lunaId": lunaInfo.dbid,
 					"title": noteInfo.title,
 					"note": noteInfo.note,
 					"idx": idx
@@ -244,16 +244,16 @@ Page {
 
     Component.onCompleted: {
 
-		Ql.ng().range(girlInfo.cycle, function(idx) {
-			notesModel.append(Algo.emptyNoteInfo(girlInfo.dbid, idx));
+		Ql.ng().range(lunaInfo.cycle, function(idx) {
+			notesModel.append(Algo.emptyNoteInfo(lunaInfo.dbid, idx));
         });
 
-		Persistence.populateNotes(notesModel, girlInfo.dbid);
+		Persistence.populateNotes(notesModel, lunaInfo.dbid);
 
 		Ql.on(notesModel).each(function(v, i) {
 			notesModel.setProperty(i, "searchMatch", false);
 		});
-		_daysInCycle = girlInfo.dayInCycle - 1;
+		_daysInCycle = lunaInfo.dayInCycle - 1;
     }
 
 	onStatusChanged: {
@@ -264,9 +264,9 @@ Page {
 			});
 			//console.log(pop);
 			if(!pop) {
-				var noteInfo = notesModel.get(girlInfo.dayInCycle - 1);
+				var noteInfo = notesModel.get(lunaInfo.dayInCycle - 1);
 				console.log(noteInfo.title);
-				if (girlInfo.noteTitle !== noteInfo.title) {
+				if (lunaInfo.noteTitle !== noteInfo.title) {
 					currentNoteChanged(noteInfo.title)
 				}
 			}
@@ -274,4 +274,3 @@ Page {
 		}
 	}
 }
-

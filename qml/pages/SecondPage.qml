@@ -38,11 +38,11 @@ import "Persistence.js" as Persistence
 Page {
 	id: page
 
-	property var girlsModel
+	property var lunasModel
 
-	signal girlSelected(int index)
+	signal lunaSelected(int index)
 
-	function addOrUpdateGirl(g, idx) {
+	function addOrUpdateLuna(g, idx) {
 		//console.log(g, idx);
 		var _daysInCycle = Algo.daysInCycle(g.cycle, g.day1ms);
 		g.dayInCycle = _daysInCycle + 1;
@@ -56,34 +56,33 @@ Page {
 		g.coverMn = mn === 0? today : String(mn)
 		if (idx >= 0) {
 			g.noteTitle = Persistence.noteTitle(g.dbid, _daysInCycle);
-			girlsModel.set(idx, g)
+			lunasModel.set(idx, g)
 		} else {
-			girlsModel.append(g);
+			lunasModel.append(g);
 		}
 	}
 
 	SilicaListView {
 		id: listView
-		model: girlsModel
+		model: lunasModel
 		anchors.fill: parent
 
 		ListView.onRemove: animateRemoval(delegate)
 
 		PullDownMenu {
 			MenuItem {
-				text: qsTr("New Girl")
+				text: qsTr("New Luna")
 				onClicked:{
-					var dialog = pageStack.push(Qt.resolvedUrl("EditGirlDlg.qml"));
-					dialog.accepted.connect(function() {
-						//console.log(dialog.girlInfo);
-						addOrUpdateGirl(dialog.girlInfo);
+					var dialog = pageStack.push(Qt.resolvedUrl("EditLunaDlg.qml"));
+                    dialog.accepted.connect(function() {
+						addOrUpdateLuna(dialog.lunaInfo);
 					});
 				}
 			}
 		}
 
 		header: PageHeader {
-			title: qsTr("Girls")
+			title: qsTr("Lunas")
 		}
 		delegate: ListItem {
 			id: delegate
@@ -97,45 +96,45 @@ Page {
 			}
 
 			onClicked: {
-				girlSelected(model.index)
+				lunaSelected(model.index)
 				pageStack.pop();
 			}
 
 			RemorseItem { id: remorse }
 
-			function propGirlInfo(idx) {
-				var _girlInfo = {};
-				Ql.on(page.girlsModel.get(index)).each(function(v, k){
+			function propLunaInfo(idx) {
+				var _lunaInfo = {};
+				Ql.on(page.lunasModel.get(index)).each(function(v, k){
 					//console.log(k,v);
-					_girlInfo[k] = v;
+					_lunaInfo[k] = v;
 				});
-				return {girlInfo: _girlInfo};
+				return {lunaInfo: _lunaInfo};
 			}
 
 			function manageNotes() {
-				var dialog = pageStack.push(Qt.resolvedUrl("NotesPage.qml"), propGirlInfo(index));
+				var dialog = pageStack.push(Qt.resolvedUrl("NotesPage.qml"), propLunaInfo(index));
 				dialog.currentNoteChanged.connect(function(newTitle) {
 					console.log(index, newTitle);
-					girlsModel.setProperty(index, "noteTitle", newTitle);
+					lunasModel.setProperty(index, "noteTitle", newTitle);
 				});
 			}
 
-			function editGirl() {
-				var dialog = pageStack.push(Qt.resolvedUrl("EditGirlDlg.qml"),
-						{girlInfo: page.girlsModel.get(index)});
+			function editLuna() {
+				var dialog = pageStack.push(Qt.resolvedUrl("EditLunaDlg.qml"),
+						{lunaInfo: page.lunasModel.get(index)});
 				dialog.accepted.connect(function() {
-					//console.log(dialog.girlInfo);
-					addOrUpdateGirl(dialog.girlInfo, index);
+					//console.log(dialog.lunaInfo);
+					addOrUpdateLuna(dialog.lunaInfo, index);
 				});
 			}
 
-			function deleteGirl() {
+			function deleteLuna() {
 				var idx = index;
 				var dbid = model.dbid;
 				remorseAction(qsTr("Deleting"), function() {
-					page.girlsModel.remove(idx);
-					Persistence.removeGirl(dbid);
-					Persistence.removeGirlNotes(dbid);
+					page.lunasModel.remove(idx);
+					Persistence.removeLuna(dbid);
+					Persistence.removeLunaNotes(dbid);
 				});
 			}
 
@@ -150,11 +149,11 @@ Page {
 					}
 					MenuItem {
 						text: qsTr("Edit")
-						onClicked: editGirl()
+						onClicked: editLuna()
 					}
 					MenuItem {
 						text: qsTr("Delete")
-						onClicked: deleteGirl()
+						onClicked: deleteLuna()
 					}
 				}
 			}
@@ -162,9 +161,8 @@ Page {
 		VerticalScrollDecorator {}
 	}
 	ViewPlaceholder {
-		enabled: girlsModel.count === 0
-		text: qsTr("No girls yet")
+		enabled: lunasModel.count === 0
+		text: qsTr("No lunas yet")
 		hintText: qsTr("Pull down to add one")
 	}
 }
-

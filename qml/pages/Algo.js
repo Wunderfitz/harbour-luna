@@ -65,12 +65,12 @@ function formatDays(d) {
 	return Sl.Format.formatDate(dt, Sl.Formatter.DurationElapsed);
 }
 
-function emptyNoteInfo(girlId, idx) {
+function emptyNoteInfo(lunaId, idx) {
 	return {
 		"title": "",
 		"note": "",
 		"dbid": 0,
-		"girlId": girlId,
+		"lunaId": lunaId,
 		"idx": idx
 	};
 }

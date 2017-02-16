@@ -20,7 +20,7 @@ OTHER_FILES += qml/harbour-luna.qml \
     qml/cover/CoverPage.qml \
     qml/pages/FirstPage.qml \
     qml/pages/SecondPage.qml \
-    qml/pages/EditGirlDlg.qml \
+    qml/pages/EditLunaDlg.qml \
     qml/pages/NotesPage.qml \
     qml/pages/EditNoteDlg.qml \
     qml/pages/Qlecti.js \

@@ -39,7 +39,7 @@ Page {
 	id: page
 
 	property bool updateAfterManage: false
-	property var selectGirlIndex
+	property var selectLunaIndex
 
 	SilicaFlickable {
 		id: mainView
@@ -51,13 +51,13 @@ Page {
 				onClicked: pageStack.push(Qt.resolvedUrl("AboutPage.qml"));
 			}
 			MenuItem {
-				text: qsTr("Manage girls")
+                text: qsTr("Edit information")
 				onClicked: {
-					var pg = pageStack.push(Qt.resolvedUrl("SecondPage.qml"),
-						{girlsModel: girlsModel});
+                    var pg = pageStack.push(Qt.resolvedUrl("SecondPage.qml"),
+						{lunasModel: lunasModel});
 					updateAfterManage = true;
-					pg.girlSelected.connect(function(idx){
-						girlView.currentIndex = idx;
+					pg.lunaSelected.connect(function(idx){
+						lunaView.currentIndex = idx;
 					});
 				}
 			}
@@ -70,30 +70,30 @@ Page {
 			}
 			MenuItem {
 				text: qsTr("Edit day note")
-				visible: girlsModel.count > 0
+				visible: lunasModel.count > 0
 				onClicked: {
-					var _girlInfo = girlsModel.get(girlView.currentIndex);
-					var _noteInfo = Persistence.note(_girlInfo.dbid, _girlInfo.dayInCycle - 1);
+					var _lunaInfo = lunasModel.get(lunaView.currentIndex);
+					var _noteInfo = Persistence.note(_lunaInfo.dbid, _lunaInfo.dayInCycle - 1);
 					if (_noteInfo === '') {
-						_noteInfo = Algo.emptyNoteInfo(_girlInfo.dbid, _girlInfo.dayInCycle - 1);
+						_noteInfo = Algo.emptyNoteInfo(_lunaInfo.dbid, _lunaInfo.dayInCycle - 1);
 					}
 
 					var dialog = pageStack.push(Qt.resolvedUrl("EditNoteDlg.qml"),
 						{noteInfo: _noteInfo})
 					dialog.accepted.connect(function() {
-						girlsModel.setProperty(girlView.currentIndex, "noteTitle", dialog.noteInfo.title);
+						lunasModel.setProperty(lunaView.currentIndex, "noteTitle", dialog.noteInfo.title);
 					});
 				}
 			}
 		}
 
 		// Tell SilicaFlickable the height of its content.
-		contentHeight: isPortrait? dateColumn.height + girlColumn.height : dateColumn.height
+		contentHeight: isPortrait? dateColumn.height + lunaColumn.height : dateColumn.height
 
 		Column {
 			id: dateColumn
 
-			property var pickerGirlInfo
+			property var pickerLunaInfo
 
 			width: isPortrait? parent.width : Screen.width//parent.width * 0.55;
 			spacing: 0
@@ -151,8 +151,8 @@ Page {
 							color: rectColor(model.day, model.month, model.year)
 
 							function rectColor(day, month, year) {
-								if (dateColumn.pickerGirlInfo) {
-									var pgi = dateColumn.pickerGirlInfo;
+								if (dateColumn.pickerLunaInfo) {
+									var pgi = dateColumn.pickerLunaInfo;
 									var d = Algo.daysInCycle(pgi.cycle, pgi.day1ms, Date.UTC(year, month - 1, day));
 									var color = pgi.colorArr[d];
 									//console.log(d, color, day, month, year)
@@ -163,8 +163,8 @@ Page {
 								return 'transparent';
 							}
 							function rectIcon(day, month, year) {
-								if (dateColumn.pickerGirlInfo) {
-									var pgi = dateColumn.pickerGirlInfo;
+								if (dateColumn.pickerLunaInfo) {
+									var pgi = dateColumn.pickerLunaInfo;
 									var d = Algo.daysInCycle(pgi.cycle, pgi.day1ms, Date.UTC(year, month - 1, day));
 									var icon = pgi.iconArr[d];
 									if (icon === 0) {
@@ -208,7 +208,7 @@ Page {
 			}
 		}
 		Item {
-			id: girlColumn
+			id: lunaColumn
 			x: isPortrait? 0 : dateColumn.width
 			y: isPortrait? dateColumn.height + dateColumn.y : Theme.paddingLarge
 			width: isPortrait? page.width : page.width - dateColumn.width
@@ -216,34 +216,26 @@ Page {
 			clip: true
 
 			SectionHeader {
-				id: girlHeader
+				id: lunaHeader
                 text: qsTr("Information")
 			}
 
 			SlideshowView {
-				id: girlView
-                y: girlHeader.y
+				id: lunaView
+                y: lunaHeader.y
                 width: parent.width
 				itemWidth: parent.width
 
 				model: 0
 				delegate: Item {
-					width: girlView.itemWidth
+					width: lunaView.itemWidth
 					height: labels.height
 
 					Column {
 						id: labels
 						property bool hasNote: !!model.noteTitle
 						width: parent.width
-						spacing: hasNote ? -Theme.paddingSmall : -1
-						Label {
-							id: name
-							width: parent.width
-							horizontalAlignment: Text.AlignHCenter
-							text: model.name
-							font.pixelSize: Theme.fontSizeLarge
-							color: Theme.primaryColor
-						}
+                        spacing: hasNote ? -Theme.paddingSmall : -1
 						DetailItem {
 							id: cycles
 							label: qsTr("Cycle")
@@ -275,19 +267,19 @@ Page {
 				}
 
 				onCurrentIndexChanged: {
-					Ql.on(girlsModel).at(currentIndex, function(girl) {
-						page.fillGirlInfo(girl);
+					Ql.on(lunasModel).at(currentIndex, function(luna) {
+						page.fillLunaInfo(luna);
 					}).empty(function() {
 						appWindow.coverInfo = undefined;
-						dateColumn.pickerGirlInfo = undefined;
+						dateColumn.pickerLunaInfo = undefined;
 					});
 				}
 			}
 		}
 
 		Label {
-			id: noGirlPlaceholder
-			anchors.fill: girlColumn
+			id: noLunaPlaceholder
+			anchors.fill: lunaColumn
 			wrapMode: Text.Wrap
 			horizontalAlignment: Text.AlignHCenter
 			verticalAlignment: Text.AlignVCenter
@@ -296,8 +288,8 @@ Page {
 				family: Theme.fontFamilyHeading
 			}
 			color: Theme.rgba(Theme.highlightColor, 0.6)
-			visible: girlView.model.count === 0
-			text: qsTr("No girls yet")
+			visible: lunaView.model.count === 0
+            text: qsTr("No data available")
 		}
 	}
 
@@ -305,20 +297,20 @@ Page {
 		if (status === PageStatus.Activating && updateAfterManage) {
 			updateAfterManage = false;
 			//console.log("Activating");
-			Ql.on(girlsModel).at(girlView.currentIndex, function(girl) {
-				page.fillGirlInfo(girl);
+			Ql.on(lunasModel).at(lunaView.currentIndex, function(luna) {
+				page.fillLunaInfo(luna);
 			}).empty(function() {
 				appWindow.coverInfo = undefined;
-				dateColumn.pickerGirlInfo = undefined;
+				dateColumn.pickerLunaInfo = undefined;
 			});
 		}
 	}
 
 	ListModel {
-		id: girlsModel
+		id: lunasModel
 	}
 
-	function fillGirlInfo(g) {
+	function fillLunaInfo(g) {
 		var colors = [];
 		var opacitys = [];
 		var icons = [];
@@ -355,7 +347,7 @@ Page {
 
 		//TBD Persistence.noteIcons(icons, g.dbid);
 		//console.log(icons);
-		dateColumn.pickerGirlInfo = {
+		dateColumn.pickerLunaInfo = {
 			colorArr: colors,
 			opacityArr: opacitys,
 			iconArr: icons,
@@ -378,27 +370,25 @@ Page {
 
 	Component.onCompleted: {
 		Persistence.initialize();
-		Persistence.populateGirls(girlsModel);
+		Persistence.populateLunas(lunasModel);
 
 		var curDayMS = Algo.todayMS();
 
-		Ql.on(girlsModel).each(function(g, i) {
+		Ql.on(lunasModel).each(function(g, i) {
 			var _daysInCycle = Algo.daysInCycle(g.cycle, g.day1ms, curDayMS);
 			var ov = Algo.nextOvDays(_daysInCycle, g.cycle);
 			var mn = Algo.nextMnDays(_daysInCycle, g.cycle);
 			var today = Algo.formatDays(0);
 
-			girlsModel.setProperty(i, "dayInCycle", _daysInCycle + 1);
-			girlsModel.setProperty(i, "nextOv", Algo.formatDays(ov));
-			girlsModel.setProperty(i, "coverOv", ov === 0? today : String(ov));
-			girlsModel.setProperty(i, "nextMn", Algo.formatDays(mn));
-			girlsModel.setProperty(i, "coverMn", mn === 0? today : String(mn));
-			girlsModel.setProperty(i, "noteTitle", Persistence.noteTitle(g.dbid, _daysInCycle));
-		}).first(function(girl) {
-			fillGirlInfo(girl);
+			lunasModel.setProperty(i, "dayInCycle", _daysInCycle + 1);
+			lunasModel.setProperty(i, "nextOv", Algo.formatDays(ov));
+			lunasModel.setProperty(i, "coverOv", ov === 0? today : String(ov));
+			lunasModel.setProperty(i, "nextMn", Algo.formatDays(mn));
+			lunasModel.setProperty(i, "coverMn", mn === 0? today : String(mn));
+			lunasModel.setProperty(i, "noteTitle", Persistence.noteTitle(g.dbid, _daysInCycle));
+		}).first(function(luna) {
+			fillLunaInfo(luna);
 		});
-		girlView.model = girlsModel;
+		lunaView.model = lunasModel;
 	}
 }
-
-

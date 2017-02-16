@@ -11,25 +11,25 @@ function initialize() {
 	database().transaction(
 		function(tx,er) {
 			// Creates tables if it doesn't already exist
-			tx.executeSql('CREATE TABLE IF NOT EXISTS girls(dbid INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, cycle INTEGER, day1ms BIGINT, pms INTEGER)');
+			tx.executeSql('CREATE TABLE IF NOT EXISTS lunas(dbid INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, cycle INTEGER, day1ms BIGINT, pms INTEGER)');
 
-			tx.executeSql('CREATE TABLE IF NOT EXISTS notes(dbid INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, note TEXT, icon INTEGER, girlId INTEGER, idx INTEGER)');
+			tx.executeSql('CREATE TABLE IF NOT EXISTS notes(dbid INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, note TEXT, icon INTEGER, lunaId INTEGER, idx INTEGER)');
 		});
 }
 
-function populateGirls(model) {
+function populateLunas(model) {
 	database().readTransaction(function(tx) {
-		var rs = tx.executeSql("SELECT * FROM girls ORDER BY name");
+		var rs = tx.executeSql("SELECT * FROM lunas ORDER BY name");
 		for (var i = 0; i < rs.rows.length; i++) {
 			model.append(rs.rows.item(i));
 		}
 	});
 }
 
-function persistGirl(g) {
+function persistLuna(g) {
 	var res = "";
 	database().transaction(function(tx) {
-		var rs = tx.executeSql("INSERT INTO girls (name, cycle, day1ms, pms) VALUES (?, ?, ?, ?)", [g.name, g.cycle, g.day1ms, g.pms]);
+		var rs = tx.executeSql("INSERT INTO lunas (name, cycle, day1ms, pms) VALUES (?, ?, ?, ?)", [g.name, g.cycle, g.day1ms, g.pms]);
 		if (rs.rowsAffected === 0) {
 			res = "Error";
 		} else {
@@ -39,17 +39,17 @@ function persistGirl(g) {
 	return res;
 }
 
-function updateGirl(g) {
+function updateLuna(g) {
 	database().transaction(function(tx) {
-		tx.executeSql("UPDATE girls SET name=?, cycle=?, day1ms=?, pms=? WHERE dbid=?", [g.name, g.cycle, g.day1ms, g.pms, g.dbid]);
+		tx.executeSql("UPDATE lunas SET name=?, cycle=?, day1ms=?, pms=? WHERE dbid=?", [g.name, g.cycle, g.day1ms, g.pms, g.dbid]);
 	});
 }
 
-function removeGirl(dbid) {
+function removeLuna(dbid) {
 	var res = "";
 	database().transaction(function(tx) {
 		res = "OK";
-		var rs = tx.executeSql("DELETE FROM girls WHERE dbid=?", [dbid]);
+		var rs = tx.executeSql("DELETE FROM lunas WHERE dbid=?", [dbid]);
 		if (rs.rowsAffected === 0) {
 			res = "Error";
 		}
@@ -57,11 +57,11 @@ function removeGirl(dbid) {
 	return res;
 }
 
-function removeAllGirls() {
+function removeAllLunas() {
 	var res = "";
 	database().transaction(function(tx) {
 		res = "OK";
-		var rs = tx.executeSql("DELETE FROM girls");
+		var rs = tx.executeSql("DELETE FROM lunas");
 		if (rs.rowsAffected === 0) {
 			res = "Error";
 		}
@@ -69,9 +69,9 @@ function removeAllGirls() {
 	return res;
 }
 
-function populateNotes(model, girlId) {
+function populateNotes(model, lunaId) {
 	database().readTransaction(function(tx) {
-		var rs = tx.executeSql("SELECT * FROM notes WHERE girlId = ?", [girlId]);
+		var rs = tx.executeSql("SELECT * FROM notes WHERE lunaId = ?", [lunaId]);
 		for (var i = 0; i < rs.rows.length; i++) {
 			var row = rs.rows.item(i);
 			if (model.count > row.idx) {
@@ -81,9 +81,9 @@ function populateNotes(model, girlId) {
 	});
 }
 
-function noteIcons(iconArr, girlId) {
+function noteIcons(iconArr, lunaId) {
 	database().readTransaction(function(tx) {
-		var rs = tx.executeSql("SELECT idx, icon FROM notes WHERE girlId=?", [girlId]);
+		var rs = tx.executeSql("SELECT idx, icon FROM notes WHERE lunaId=?", [lunaId]);
 		for (var i = 0; i < rs.rows.length; i++) {
 			var row = rs.rows.item(i);
 			if (iconArr.length > row.idx) {
@@ -93,11 +93,11 @@ function noteIcons(iconArr, girlId) {
 	});
 }
 
-function noteTitle(girlId, idx) {
+function noteTitle(lunaId, idx) {
 	var res = "";
 	database().readTransaction(function(tx) {
 		res = "OK";
-		var rs = tx.executeSql("SELECT title FROM notes WHERE girlId=? AND idx=?", [girlId, idx]);
+		var rs = tx.executeSql("SELECT title FROM notes WHERE lunaId=? AND idx=?", [lunaId, idx]);
 		if (rs.rows.length === 1) {
 			res = rs.rows.item(0).title;
 		} else {
@@ -107,11 +107,11 @@ function noteTitle(girlId, idx) {
 	return res;
 }
 
-function note(girlId, idx) {
+function note(lunaId, idx) {
 	var res = "";
 	database().readTransaction(function(tx) {
 		res = "OK";
-		var rs = tx.executeSql("SELECT * FROM notes WHERE girlId=? AND idx=?", [girlId, idx]);
+		var rs = tx.executeSql("SELECT * FROM notes WHERE lunaId=? AND idx=?", [lunaId, idx]);
 		if (rs.rows.length === 1) {
 			res = rs.rows.item(0);
 		} else {
@@ -124,7 +124,7 @@ function note(girlId, idx) {
 function persistNote(n) {
 	var res = "";
 	database().transaction(function(tx) {
-		var rs = tx.executeSql("INSERT INTO notes (title, note, icon, girlId, idx) VALUES (?, ?, ?, ?, ?)", [n.title, n.note, n.icon, n.girlId, n.idx]);
+		var rs = tx.executeSql("INSERT INTO notes (title, note, icon, lunaId, idx) VALUES (?, ?, ?, ?, ?)", [n.title, n.note, n.icon, n.lunaId, n.idx]);
 		if (rs.rowsAffected === 0) {
 			res = "Error";
 		} else {
@@ -152,15 +152,14 @@ function removeNote(dbid) {
 	return res;
 }
 
-function removeGirlNotes(girlId) {
+function removeLunaNotes(lunaId) {
 	var res = "";
 	database().transaction(function(tx) {
 		res = "OK";
-		var rs = tx.executeSql("DELETE FROM notes WHERE girlId=?", [girlId]);
+		var rs = tx.executeSql("DELETE FROM notes WHERE lunaId=?", [lunaId]);
 		if (rs.rowsAffected === 0) {
 			res = "Error";
 		}
 	});
 	return res;
 }
-
