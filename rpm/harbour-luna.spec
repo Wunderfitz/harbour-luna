@@ -12,9 +12,9 @@ Name:       harbour-luna
 %{!?qtc_qmake5:%define qtc_qmake5 %qmake5}
 %{!?qtc_make:%define qtc_make make}
 %{?qtc_builddir:%define _builddir %qtc_builddir}
-Summary:    An application for a tracking women's cycle
+Summary:    An application for tracking the women's cycle
 Version:    0.1
-Release:    1
+Release:    2
 Group:      Qt/Qt
 License:    BSD (3-clause)
 URL:        https://github.com/Wunderfitz/harbour-luna
@@ -28,7 +28,7 @@ BuildRequires:  pkgconfig(Qt5Quick)
 BuildRequires:  desktop-file-utils
 
 %description
-Displays the menstruation, ovulation and PMS days a calendar.
+Displays the menstruation, ovulation and PMS days in a calendar.
 
 
 %prep
@@ -62,12 +62,10 @@ desktop-file-install --delete-original       \
    %{buildroot}%{_datadir}/applications/*.desktop
 
 %files
-%defattr(644,root,root,-)
+%defattr(-,root,root,-)
 %{_bindir}
 %{_datadir}/%{name}
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/icons/hicolor/86x86/apps/%{name}.png
 # >> files
 # << files
-
-%attr(755, root, root) %{_bindir}

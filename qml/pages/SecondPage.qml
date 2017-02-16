@@ -38,7 +38,7 @@ import "Persistence.js" as Persistence
 Page {
 	id: page
 
-	property var lunasModel
+    property var lunasModel
 
 	signal lunaSelected(int index)
 
@@ -56,22 +56,22 @@ Page {
 		g.coverMn = mn === 0? today : String(mn)
 		if (idx >= 0) {
 			g.noteTitle = Persistence.noteTitle(g.dbid, _daysInCycle);
-			lunasModel.set(idx, g)
+            lunasModel.set(idx, g)
 		} else {
-			lunasModel.append(g);
+            lunasModel.append(g);
 		}
 	}
 
 	SilicaListView {
 		id: listView
-		model: lunasModel
+        model: lunasModel
 		anchors.fill: parent
 
 		ListView.onRemove: animateRemoval(delegate)
 
 		PullDownMenu {
 			MenuItem {
-				text: qsTr("New Luna")
+                text: qsTr("New Profile")
 				onClicked:{
 					var dialog = pageStack.push(Qt.resolvedUrl("EditLunaDlg.qml"));
                     dialog.accepted.connect(function() {
@@ -82,7 +82,7 @@ Page {
 		}
 
 		header: PageHeader {
-			title: qsTr("Lunas")
+            title: qsTr("Profiles")
 		}
 		delegate: ListItem {
 			id: delegate
@@ -104,7 +104,7 @@ Page {
 
 			function propLunaInfo(idx) {
 				var _lunaInfo = {};
-				Ql.on(page.lunasModel.get(index)).each(function(v, k){
+                Ql.on(page.lunasModel.get(index)).each(function(v, k){
 					//console.log(k,v);
 					_lunaInfo[k] = v;
 				});
@@ -115,13 +115,13 @@ Page {
 				var dialog = pageStack.push(Qt.resolvedUrl("NotesPage.qml"), propLunaInfo(index));
 				dialog.currentNoteChanged.connect(function(newTitle) {
 					console.log(index, newTitle);
-					lunasModel.setProperty(index, "noteTitle", newTitle);
+                    lunasModel.setProperty(index, "noteTitle", newTitle);
 				});
 			}
 
 			function editLuna() {
 				var dialog = pageStack.push(Qt.resolvedUrl("EditLunaDlg.qml"),
-						{lunaInfo: page.lunasModel.get(index)});
+                        {lunaInfo: page.lunasModel.get(index)});
 				dialog.accepted.connect(function() {
 					//console.log(dialog.lunaInfo);
 					addOrUpdateLuna(dialog.lunaInfo, index);
@@ -132,7 +132,7 @@ Page {
 				var idx = index;
 				var dbid = model.dbid;
 				remorseAction(qsTr("Deleting"), function() {
-					page.lunasModel.remove(idx);
+                    page.lunasModel.remove(idx);
 					Persistence.removeLuna(dbid);
 					Persistence.removeLunaNotes(dbid);
 				});
@@ -161,8 +161,8 @@ Page {
 		VerticalScrollDecorator {}
 	}
 	ViewPlaceholder {
-		enabled: lunasModel.count === 0
-		text: qsTr("No lunas yet")
+        enabled: lunasModel.count === 0
+        text: qsTr("No profiles yet")
 		hintText: qsTr("Pull down to add one")
 	}
 }

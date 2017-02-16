@@ -51,14 +51,14 @@ Page {
 				onClicked: pageStack.push(Qt.resolvedUrl("AboutPage.qml"));
 			}
 			MenuItem {
-                text: qsTr("Edit information")
-				onClicked: {
+                text: qsTr("Edit Profiles")
+                onClicked: {
                     var pg = pageStack.push(Qt.resolvedUrl("SecondPage.qml"),
-						{lunasModel: lunasModel});
-					updateAfterManage = true;
-					pg.lunaSelected.connect(function(idx){
-						lunaView.currentIndex = idx;
-					});
+                        {lunasModel: lunasModel});
+                    updateAfterManage = true;
+                    pg.lunaSelected.connect(function(idx){
+                        lunaView.currentIndex = idx;
+                    });
 				}
 			}
 		}
@@ -182,7 +182,7 @@ Page {
 									}
 								anchors.centerIn: parent
 								text: model.day
-								font.pixelSize: 0
+                                font.pixelSize: Theme.fontSizeMedium
 								font.bold: _today
 								color: Theme.primaryColor
 							}
@@ -236,6 +236,14 @@ Page {
 						property bool hasNote: !!model.noteTitle
 						width: parent.width
                         spacing: hasNote ? -Theme.paddingSmall : -1
+                        Label {
+                            id: name
+                            width: parent.width
+                            horizontalAlignment: Text.AlignHCenter
+                            text: model.name
+                            font.pixelSize: Theme.fontSizeSmall
+                            color: Theme.primaryColor
+                        }
 						DetailItem {
 							id: cycles
 							label: qsTr("Cycle")

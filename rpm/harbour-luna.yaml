@@ -1,7 +1,7 @@
 Name: harbour-luna
-Summary: An application for tracking a women's cycle
+Summary: An application for tracking the women's cycle
 Version: 0.1
-Release: 1
+Release: 2
 # The contents of the Group field should be one of the groups listed here:
 # http://gitorious.org/meego-developer-tools/spectacle/blobs/master/data/GROUPS
 Group: Qt/Qt
@@ -12,7 +12,7 @@ License: BSD (3-clause)
 Sources:
 - '%{name}-%{version}.tar.bz2'
 Description: |
-  Displays the menstruation, ovulation and PMS days in the calendar.
+  Displays the menstruation, ovulation and PMS days in a calendar.
 Configure: none
 # The qtc5 builder inserts macros to allow QtCreator to have fine
 # control over qmake/make execution

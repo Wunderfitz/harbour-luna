@@ -31,11 +31,10 @@ Dialog {
 			TextField {
 				id: name
 				width: parent.width
-                placeholderText: qsTr("Enter alias")
-                label: qsTr("Alias")
+                placeholderText: qsTr("Enter profile name")
+                label: qsTr("Profile")
 				EnterKey.onClicked: page.focus = true
                 text: "Luna"
-                visible: false
 			}
 			SectionHeader {
                 text: qsTr("Cycle Length")
